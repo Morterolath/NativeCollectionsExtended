@@ -7,8 +7,8 @@ namespace NativeCollectionsExtended
     {
         public struct Array
         {
-            NativeArray<ArrayPointer> _arrayPointers;
-            NativeArray<T> _arrayData;
+            internal NativeArray<ArrayPointer> _arrayPointers;
+            internal NativeArray<T> _arrayData;
 
             internal Array(NativeArray<ArrayPointer> arrayPointers, NativeArray<T> arrayData)
             {
@@ -41,7 +41,7 @@ namespace NativeCollectionsExtended
                 get
                 {
                     ArrayPointer ap = _arrayPointers[arrayIndex];
-                    return _arrayData[ap.Start + elementIndex]; 
+                    return _arrayData[ap.Start + elementIndex];
                 }
             }
             public int ArrayLength(int arrayIndex)
@@ -55,8 +55,8 @@ namespace NativeCollectionsExtended
         }
         public struct ReadOnly
         {
-            NativeArray<ArrayPointer> _arrayPointers;
-            NativeArray<T> _arrayData;
+            internal NativeArray<ArrayPointer> _arrayPointers;
+            internal NativeArray<T> _arrayData;
 
             internal ReadOnly(NativeArray<ArrayPointer> arrayPointers, NativeArray<T> arrayData)
             {
@@ -93,8 +93,8 @@ namespace NativeCollectionsExtended
         }
         public struct ParallelWriter
         {
-            NativeArray<ArrayPointer> _arrayPointers;
-            [NativeDisableParallelForRestriction] NativeArray<T> _arrayData;
+            internal NativeArray<ArrayPointer> _arrayPointers;
+            [NativeDisableParallelForRestriction] internal NativeArray<T> _arrayData;
 
             internal ParallelWriter(NativeArray<ArrayPointer> arrayPointers, NativeArray<T> arrayData)
             {
@@ -122,8 +122,8 @@ namespace NativeCollectionsExtended
             internal int Start;
             internal int Length;
         }
-        NativeList<ArrayPointer> _arrayPointers;
-        NativeList<T> _arrayData;
+        internal NativeList<ArrayPointer> _arrayPointers;
+        internal NativeList<T> _arrayData;
 
         public ListOfArrays(Allocator allocator)
         {
@@ -237,6 +237,41 @@ namespace NativeCollectionsExtended
         {
             ArrayPointer ptr = _arrayPointers[arrayIndex];
             for (int i = ptr.Start; i < ptr.Start + ptr.Length; i++) _arrayData[i] = defaultValue;
+        }
+    }
+    public static class ListOfArraysLowLevelHelper
+    {
+        public static void GetArrayRaw<T>(ListOfArrays<T> listOfArrays, int arrayIndex, out NativeArray<T> dataBuffer, out int arrayStart, out int arrayLength)
+            where T : unmanaged
+        {
+            dataBuffer = listOfArrays._arrayData.AsArray();
+            ListOfArrays<T>.ArrayPointer arrPtr = listOfArrays._arrayPointers[arrayIndex];
+            arrayStart = arrPtr.Start;
+            arrayLength = arrPtr.Length;
+        }
+        public static void GetArrayRaw<T>(ListOfArrays<T>.Array listOfArrays, int arrayIndex, out NativeArray<T> dataBuffer, out int arrayStart, out int arrayLength)
+            where T : unmanaged
+        {
+            dataBuffer = listOfArrays._arrayData;
+            ListOfArrays<T>.ArrayPointer arrPtr = listOfArrays._arrayPointers[arrayIndex];
+            arrayStart = arrPtr.Start;
+            arrayLength = arrPtr.Length;
+        }
+        public static void GetArrayRaw<T>(ListOfArrays<T>.ReadOnly listOfArrays, int arrayIndex, out NativeArray<T> dataBuffer, out int arrayStart, out int arrayLength)
+            where T : unmanaged
+        {
+            dataBuffer = listOfArrays._arrayData;
+            ListOfArrays<T>.ArrayPointer arrPtr = listOfArrays._arrayPointers[arrayIndex];
+            arrayStart = arrPtr.Start;
+            arrayLength = arrPtr.Length;
+        }
+        public static void GetDeferredArrayRaw<T>(ListOfArrays<T> listOfArrays, int arrayIndex, out NativeArray<T> dataBuffer, out int arrayStart, out int arrayLength)
+            where T : unmanaged
+        {
+            dataBuffer = listOfArrays._arrayData.AsDeferredJobArray();
+            ListOfArrays<T>.ArrayPointer arrPtr = listOfArrays._arrayPointers[arrayIndex];
+            arrayStart = arrPtr.Start;
+            arrayLength = arrPtr.Length;
         }
     }
 }
