@@ -4,7 +4,7 @@ namespace NativeCollectionsExtended
 {
     public struct NativeArrayReadOnly<T> where T : unmanaged
     {
-        [ReadOnly] NativeArray<T> _array;
+        [ReadOnly] internal NativeArray<T> _array;
 
         public int Length => _array.Length;
         public bool IsCreated => _array.IsCreated;
@@ -23,6 +23,14 @@ namespace NativeCollectionsExtended
         public void CopyTo(NativeSlice<T> slice)
         {
             slice.CopyFrom(_array);
+        }
+    }
+    public static class NativeArrayReadOnlyLowLevelHelper
+    {
+        public static NativeArray<T> GetRawArray<T>(NativeArrayReadOnly<T> array)
+            where T : unmanaged
+        {
+            return array._array;
         }
     }
 }
