@@ -1,5 +1,7 @@
-﻿using Unity.Collections;
+﻿using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Mathematics;
+using UnityEngine.UIElements;
 
 namespace NativeCollectionsExtended
 {
@@ -186,6 +188,19 @@ namespace NativeCollectionsExtended
             for (int i = oldDataLength; i < newDataLength; i++) _arrayData[i] = defaultValue;
 
             _arrayPointers.Add(new ArrayPointer { Start = oldDataLength, Length = length });
+        }
+        public void AddArray(List<T> copyFrom)
+        {
+            int length = copyFrom.Count;
+            int oldDataLength = _arrayData.Length;
+            int newDataLength = oldDataLength + length;
+            _arrayData.ResizeUninitialized(newDataLength);
+
+            _arrayPointers.Add(new ArrayPointer { Start = oldDataLength, Length = length });
+
+            NativeSlice<T> slice = _arrayData.AsArray().Slice(oldDataLength, length);
+            for (int i = 0; i  < copyFrom.Count; i++)
+                slice[i] = copyFrom[i];
         }
         public void AddArrayUnitialized(int length)
         {
