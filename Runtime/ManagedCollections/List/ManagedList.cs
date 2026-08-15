@@ -6,17 +6,17 @@ using UnityEngine.UIElements;
 
 namespace ManagedCollectionsExtended
 {
-    public class List<T>
+    public class ManagedList<T>
     {
         public ref struct Span
         {
             internal Span<T> m_Data;
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
             internal ulong m_VersionSnapshot_Dbg;
-            internal List<T> m_VersionOriginal_Dbg;
+            internal ManagedList<T> m_VersionOriginal_Dbg;
 #endif
 
-            internal Span(List<T> list)
+            internal Span(ManagedList<T> list)
             {
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
                 SafetyCheckHelper.SnapshotVersion(list, out m_VersionSnapshot_Dbg, out m_VersionOriginal_Dbg);
@@ -58,10 +58,10 @@ namespace ManagedCollectionsExtended
             internal ReadOnlySpan<T> m_Data;
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
             internal ulong m_VersionSnapshot_Dbg;
-            internal List<T> m_VersionOriginal_Dbg;
+            internal ManagedList<T> m_VersionOriginal_Dbg;
 #endif
 
-            internal ReadOnlySpan(List<T> list)
+            internal ReadOnlySpan(ManagedList<T> list)
             {
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
                 SafetyCheckHelper.SnapshotVersion(list, out m_VersionSnapshot_Dbg, out m_VersionOriginal_Dbg);
@@ -97,7 +97,7 @@ namespace ManagedCollectionsExtended
         internal ulong m_Version_Dbg;
 #endif
 
-        public List(int capacity = 32)
+        public ManagedList(int capacity = 32)
         {
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
             SafetyCheckHelper.CapacityMustBeNonNegative(capacity);
@@ -281,18 +281,18 @@ namespace ManagedCollectionsExtended
             {
                 version++;
             }
-            internal static void VersionMustBeSame(ulong version, List<T> original)
+            internal static void VersionMustBeSame(ulong version, ManagedList<T> original)
             {
                 if(version != original.m_Version_Dbg)
                 {
-                    throw new Exception($"Due to interactions with original data structure {nameof(List<T>)} this view is invalidated");
+                    throw new Exception($"Due to interactions with original data structure {nameof(ManagedList<T>)} this view is invalidated");
                 }
             }
             internal static void CreateVersion(out ulong version)
             {
                 version = 0;
             }
-            internal static void SnapshotVersion(List<T> list, out ulong snapshotVersion, out List<T> originalVersion)
+            internal static void SnapshotVersion(ManagedList<T> list, out ulong snapshotVersion, out ManagedList<T> originalVersion)
             {
                 snapshotVersion = list.m_Version_Dbg;
                 originalVersion = list;
