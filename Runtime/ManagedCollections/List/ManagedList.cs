@@ -169,14 +169,22 @@ namespace ManagedCollectionsExtended
             }
             m_Length = length;
         }
-        public void Add(T data)
+        public void SetRange(int start, int length, T value)
+        {
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+            SafetyCheckHelper.RangeMustBeWithinBounds(start, length, m_Length);
+#endif
+            for (int i = start; i < length; i++)
+                m_Data[i] = value;
+        }
+        public void Add(T value)
         {
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
             SafetyCheckHelper.IncVersion(ref m_Version_Dbg);
 #endif
             if (m_Data.Length == m_Length)
                 Grow();
-            m_Data[m_Length] = data;
+            m_Data[m_Length] = value;
             m_Length++;
         }
         public void RemoveAtSwapBack(int index)
@@ -188,30 +196,11 @@ namespace ManagedCollectionsExtended
             m_Data[index] = m_Data[m_Length - 1];
             m_Length--;
         }
-        public void RemoveAtSwapBackAndUninitialize(int index)
-        {
-#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
-            SafetyCheckHelper.IndexMustBeWithinBounds(index, m_Length);
-            SafetyCheckHelper.IncVersion(ref m_Version_Dbg);
-#endif
-            m_Data[index] = m_Data[m_Length - 1];
-            m_Data[m_Length - 1] = default;
-            m_Length--;
-        }
         public void Clear()
         {
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
             SafetyCheckHelper.IncVersion(ref m_Version_Dbg);
 #endif
-            m_Length = 0;
-        }
-        public void ClearAndUninitialize()
-        {
-#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
-            SafetyCheckHelper.IncVersion(ref m_Version_Dbg);
-#endif
-            for (int i = 0; i < m_Length; i++)
-                m_Data[i] = default;
             m_Length = 0;
         }
         public ReadOnlySpan AsReadOnlySpan()
@@ -222,7 +211,6 @@ namespace ManagedCollectionsExtended
         {
             return new Span(this);
         }
-
         void Grow()
         {
             int capacity = m_Data.Length;
@@ -254,6 +242,21 @@ namespace ManagedCollectionsExtended
                 if(index < 0 | index >= length)
                 {
                     throw new Exception($"Index {index} must be within bounds (0, {length})");
+                }
+            }
+            internal static void RangeMustBeWithinBounds(int start, int length, int listLength)
+            {
+                if(length < 0)
+                {
+                    throw new Exception($"Range length ({length}) can not be <0");
+                }
+                if(start < 0)
+                {
+                    throw new Exception($"Range start ({start}) can not be  <0");
+                }
+                if((start + length) > listLength)
+                {
+                    throw new Exception($"Range ({start}, {length}) must be withing bounds (0, {listLength})");
                 }
             }
             internal static void NewCapacityMustBeGreater(int newCapacity, T[] data)
