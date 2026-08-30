@@ -24,6 +24,14 @@ namespace NativeCollectionsExtended
         {
             slice.CopyFrom(_array);
         }
+        public void CopyTo(NativeArray<T> slice)
+        {
+            slice.CopyFrom(_array);
+        }
+        public NativeArray<T> ToArray(Allocator allocator)
+        {
+            return new NativeArray<T>(_array, allocator);
+        }
     }
     public static class NativeArrayReadOnlyLowLevelHelper
     {
