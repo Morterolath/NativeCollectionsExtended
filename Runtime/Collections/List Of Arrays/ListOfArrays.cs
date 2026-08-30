@@ -258,7 +258,7 @@ namespace NativeCollectionsExtended
         {
             return new ReadOnly(_arrayPointers.AsArray(), _arrayData.AsArray());
         }
-        public ReadOnly AsDeferrebJobArrayReadOnly()
+        public ReadOnly AsDeferredJobArrayReadOnly()
         {
             return new ReadOnly(_arrayPointers.AsDeferredJobArray(), _arrayData.AsDeferredJobArray());
         }
