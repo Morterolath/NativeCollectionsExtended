@@ -326,5 +326,25 @@ namespace NativeCollectionsExtended
             arrayStart = arrPtr.Start;
             arrayLength = arrPtr.Length;
         }
+        public static void GetArrayRaw<T>(ListOfArrays<T> listOfArrays, out NativeArray<T> dataBuffer)
+            where T : unmanaged
+        {
+            dataBuffer = listOfArrays._arrayData.AsArray();
+        }
+        public static void GetArrayRaw<T>(ListOfArrays<T>.Array listOfArrays, out NativeArray<T> dataBuffer)
+            where T : unmanaged
+        {
+            dataBuffer = listOfArrays._arrayData;
+        }
+        public static void GetArrayRaw<T>(ListOfArrays<T>.ReadOnly listOfArrays, out NativeArray<T> dataBuffer)
+            where T : unmanaged
+        {
+            dataBuffer = listOfArrays._arrayData;
+        }
+        public static void GetDeferredArrayRaw<T>(ListOfArrays<T> listOfArrays, out NativeArray<T> dataBuffer)
+            where T : unmanaged
+        {
+            dataBuffer = listOfArrays._arrayData.AsDeferredJobArray();
+        }
     }
 }
