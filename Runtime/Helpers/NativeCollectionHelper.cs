@@ -34,7 +34,7 @@ namespace NativeCollectionsExtended
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
             SafetyCheckHelper.LengthsMustMatch(data, rearrangedIndicies);
 #endif
-            helperBuffer.ResizeUninitialized(UnsafeUtility.SizeOf<T>());
+            helperBuffer.ResizeUninitialized(UnsafeUtility.SizeOf<T>() * data.Length);
             NativeArray<T> helperBuffer_asT = helperBuffer.AsArray().Reinterpret<T>(1);
             helperBuffer_asT.Slice().CopyFrom(data);
 
@@ -47,7 +47,7 @@ namespace NativeCollectionsExtended
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG
             SafetyCheckHelper.LengthsMustMatch(data, rearrangedIndicies);
 #endif
-            helperBuffer.ResizeUninitialized(UnsafeUtility.SizeOf<T>());
+            helperBuffer.ResizeUninitialized(UnsafeUtility.SizeOf<T>() * data.Length);
             NativeArray<T> helperBuffer_asT = helperBuffer.AsArray().Reinterpret<T>(1);
             helperBuffer_asT.CopyFrom(data);
 
