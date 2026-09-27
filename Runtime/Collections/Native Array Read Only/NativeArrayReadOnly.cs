@@ -16,6 +16,26 @@ namespace NativeCollectionsExtended
         {
             return new NativeSliceReadOnly<T>(_array.Slice(start, length));
         }
+        public NativeArrayReadOnly<U> Reinterpret<U>()
+            where U : unmanaged
+        {
+            return new NativeArrayReadOnly<U>(_array.Reinterpret<U>());
+        }
+        public NativeArrayReadOnly<U> Reinterpret<U>(int expectedTypeSize)
+            where U : unmanaged
+        {
+            return new NativeArrayReadOnly<U>(_array.Reinterpret<U>(expectedTypeSize));
+        }
+        public void ReinterpretStore<U>(int destIndex, U data)
+            where U : unmanaged
+        {
+            _array.ReinterpretStore(destIndex, data);
+        }
+        public void ReinterpretLoad<U>(int sourceIndex)
+            where U : unmanaged
+        {
+            _array.ReinterpretLoad<U>(sourceIndex);
+        }
         public void CopyTo(NativeList<T> list)
         {
             list.CopyFrom(_array);
