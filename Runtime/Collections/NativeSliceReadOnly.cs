@@ -78,6 +78,12 @@ namespace NativeCollectionsExtended
             }
             return -1;
         }
+        public static void CopyFromList<T>(NativeSlice<T> slice, List<T> list)
+            where T : unmanaged
+        {
+            for (int i = 0; i < list.Count; i++)
+                slice[i] = list[i];
+        }
         public static void CopyToList<T>(NativeSlice<T> slice, List<T> list)
             where T : unmanaged
         {
