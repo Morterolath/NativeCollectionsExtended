@@ -78,5 +78,31 @@ namespace NativeCollectionsExtended
             }
             return -1;
         }
+        public static void CopyToList<T>(NativeSlice<T> slice, List<T> list)
+            where T : unmanaged
+        {
+            list.Clear();
+            for (int i = 0; i < slice.Length; i++)
+                list.Add(slice[i]);
+        }
+        public static void CopyToList<T>(NativeSliceReadOnly<T> slice, List<T> list)
+            where T : unmanaged
+        {
+            list.Clear(),
+            for (int i = 0; i < slice.Length; i++)
+                list.Add(slice[i]);
+        }
+        public static void AddToListNoClear<T>(NativeSlice<T> slice, List<T> list)
+            where T : unmanaged
+        {
+            for (int i = 0; i < slice.Length; i++)
+                list.Add(slice[i]);
+        }
+        public static void AddToList<T>(NativeSliceReadOnly<T> slice, List<T> list)
+            where T : unmanaged
+        {
+            for (int i = 0; i < slice.Length; i++)
+                list.Add(slice[i]);
+        }
     }
 }
