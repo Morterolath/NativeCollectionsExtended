@@ -88,7 +88,7 @@ namespace NativeCollectionsExtended
         public static void CopyToList<T>(NativeSliceReadOnly<T> slice, List<T> list)
             where T : unmanaged
         {
-            list.Clear(),
+            list.Clear();
             for (int i = 0; i < slice.Length; i++)
                 list.Add(slice[i]);
         }
