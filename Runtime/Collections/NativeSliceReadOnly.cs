@@ -78,6 +78,9 @@ namespace NativeCollectionsExtended
             }
             return -1;
         }
+    }
+    public static class NativeSliceHelper
+    {
         public static void CopyFromList<T>(NativeSlice<T> slice, List<T> list)
             where T : unmanaged
         {
