@@ -305,13 +305,18 @@ namespace ManagedCollectionsExtended
     }
     public static class ManagedListLowLevelHelper
     {
-        public static T[] GetInternalArray<T>(ManagedList<T> list)
+        public static T[] GetInternalArray<T>(ManagedList<T> list, out int length)
         {
+            length = list.m_Length;
             return list.m_Data;
         }
-        public static ReadOnlySpan<T> GetInternalArrayAsReadonly<T>(ManagedList<T> list)
+        public static Span<T> GetInternalArrayAsSpan<T>(ManagedList<T> list)
         {
-            return list.m_Data;
+            return new Span<T>(list.m_Data, 0, list.m_Length);
+        }
+        public static ReadOnlySpan<T> GetInternalArrayAsReadonlySpan<T>(ManagedList<T> list)
+        {
+            return new ReadOnlySpan<T>(list.m_Data, 0, list.m_Length);
         }
     }
 }
