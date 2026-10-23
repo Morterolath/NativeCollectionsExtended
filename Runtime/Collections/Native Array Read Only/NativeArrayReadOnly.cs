@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 
 namespace NativeCollectionsExtended
 {
@@ -51,6 +52,10 @@ namespace NativeCollectionsExtended
         public NativeArray<T> ToArray(Allocator allocator)
         {
             return new NativeArray<T>(_array, allocator);
+        }
+        public ReadOnlySpan<T> AsReadOnlySpan()
+        {
+            return _array.AsReadOnlySpan();
         }
     }
     public static class NativeArrayReadOnlyLowLevelHelper

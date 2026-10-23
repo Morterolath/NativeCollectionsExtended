@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine.UIElements;
@@ -345,6 +346,59 @@ namespace NativeCollectionsExtended
             where T : unmanaged
         {
             dataBuffer = listOfArrays._arrayData.AsDeferredJobArray();
+        }
+        public static void GetArrayRawWithSlices<T>(ListOfArrays<T> listOfArrays, NativeArray<SlicePtr> slicePtrs, out NativeArray<T> dataBuffer)
+            where T : unmanaged
+        {
+            CopyToSlicePtrsBuffer(listOfArrays._arrayPointers.AsArray(), slicePtrs);
+            dataBuffer = listOfArrays._arrayData.AsArray();
+        }
+        public static void GetArrayRawWithSlices<T>(ListOfArrays<T>.Array listOfArrays, NativeArray<SlicePtr> slicePtrs, out NativeArray<T> dataBuffer)
+            where T : unmanaged
+        {
+            CopyToSlicePtrsBuffer(listOfArrays._arrayPointers, slicePtrs);
+            dataBuffer = listOfArrays._arrayData;
+        }
+        public static void GetArrayRawWithSlices<T>(ListOfArrays<T>.ReadOnly listOfArrays, NativeArray<SlicePtr> slicePtrs, out NativeArray<T> dataBuffer)
+            where T : unmanaged
+        {
+            CopyToSlicePtrsBuffer(listOfArrays._arrayPointers, slicePtrs);
+            dataBuffer = listOfArrays._arrayData;
+        }
+
+        static void CopyToSlicePtrsBuffer<T>(NativeArray<ListOfArrays<T>.ArrayPointer> arrayPtrs, NativeArray<SlicePtr> slicePtrs)
+            where T : unmanaged
+        {
+            for(int i = 0; i < arrayPtrs.Length; i++)
+            {
+                ListOfArrays<T>.ArrayPointer ptr = arrayPtrs[i];
+                slicePtrs[i] = new SlicePtr
+                {
+                    Start = ptr.Start,
+                    Length = ptr.Length
+                };
+            }
+        }
+        public static class Unsafe
+        {
+            public static void GetArrayRawWithSlices<T>(ListOfArrays<T> listOfArrays, out NativeArrayReadOnly<SlicePtr> slicePtrs, out NativeArray<T> dataBuffer)
+                where T : unmanaged
+            {
+                slicePtrs = new NativeArrayReadOnly<SlicePtr>(listOfArrays._arrayPointers.AsArray().Reinterpret<SlicePtr>());
+                dataBuffer = listOfArrays._arrayData.AsArray();
+            }
+            public static void GetArrayRawWithSlices<T>(ListOfArrays<T>.Array listOfArrays, out NativeArrayReadOnly<SlicePtr> slicePtrs, out NativeArray<T> dataBuffer)
+                where T : unmanaged
+            {
+                slicePtrs = new NativeArrayReadOnly<SlicePtr>(listOfArrays._arrayPointers.Reinterpret<SlicePtr>());
+                dataBuffer = listOfArrays._arrayData;
+            }
+            public static void GetArrayRawWithSlices<T>(ListOfArrays<T>.ReadOnly listOfArrays, out NativeArrayReadOnly<SlicePtr> slicePtrs, out NativeArray<T> dataBuffer)
+                where T : unmanaged
+            {
+                slicePtrs = new NativeArrayReadOnly<SlicePtr>(listOfArrays._arrayPointers.Reinterpret<SlicePtr>());
+                dataBuffer = listOfArrays._arrayData;
+            }
         }
     }
 }
