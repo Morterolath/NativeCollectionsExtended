@@ -65,6 +65,17 @@ namespace NativeCollectionsExtended
             }
             return -1;
         }
+        public static int LinearSearch<T, U>(NativeSliceReadOnly<T> slice, U equalityComparerWithValue)
+            where T : unmanaged
+            where U : IEquatable<T>
+        {
+            for(int i = 0; i < slice._slice.Length; i++)
+            {
+                if (equalityComparerWithValue.Equals(slice[i]))
+                    return i;
+            }
+            return -1;
+        }
     }
     public static class NativeSliceSearchHelper
     {
