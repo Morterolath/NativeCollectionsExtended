@@ -227,6 +227,18 @@ namespace NativeCollectionsExtended
             NativeSlice<T> slice = _arrayData.AsArray().Slice(oldDataLength, length);
             slice.CopyFrom(copyFrom);
         }
+        public void AddArray(NativeSliceReadOnly<T> copyFrom)
+        {
+            int length = copyFrom.Length;
+            int oldDataLength = _arrayData.Length;
+            int newDataLength = oldDataLength + length;
+            _arrayData.ResizeUninitialized(newDataLength);
+
+            _arrayPointers.Add(new ArrayPointer { Start = oldDataLength, Length = length });
+
+            NativeSlice<T> slice = _arrayData.AsArray().Slice(oldDataLength, length);
+            copyFrom.CopyTo(slice);
+        }
         public void AddArray<E>(E copyFrom)
             where E : IIndexable<T>, INativeList<T>
         {
