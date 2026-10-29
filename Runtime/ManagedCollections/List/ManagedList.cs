@@ -203,6 +203,15 @@ namespace ManagedCollectionsExtended
 #endif
             m_Length = 0;
         }
+        public void TrimExcess()
+        {
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+            SafetyCheckHelper.IncVersion(ref m_Version_Dbg);
+#endif
+            T[] trimmed = new T[m_Length];
+            m_Data.AsSpan(0, m_Length).CopyTo(trimmed.AsSpan());
+            m_Data = trimmed;
+        }
         public ReadOnlySpan AsReadOnlySpan()
         {
             return new ReadOnlySpan(this);
