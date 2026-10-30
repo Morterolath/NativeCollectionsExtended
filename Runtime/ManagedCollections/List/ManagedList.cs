@@ -187,6 +187,17 @@ namespace ManagedCollectionsExtended
             m_Data[m_Length] = value;
             m_Length++;
         }
+        public void Add(T[] values)
+        {
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+            SafetyCheckHelper.IncVersion(ref m_Version_Dbg);
+#endif
+            int newLength = m_Length + values.Length;
+            if (m_Data.Length < newLength)
+                GrowTo(newLength);
+            values.AsSpan().CopyTo(m_Data.AsSpan(m_Length, values.Length));
+            m_Length = newLength;
+        }
         public void RemoveAtSwapBack(int index)
         {
 #if NATIVE_COLLECTIONS_EXTENDED_DEBUG

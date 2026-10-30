@@ -18,6 +18,18 @@ namespace NativeCollectionsExtended
             for (int i = 0; i < arr.Length; i++)
                 set.Add(arr[i]);
         }
+        public static void CopyToHashSet<T>(NativeSlice<T> arr, NativeHashSet<T> set)
+            where T : unmanaged, IEquatable<T>
+        {
+            for (int i = 0; i < arr.Length; i++)
+                set.Add(arr[i]);
+        }
+        public static void CopyToHashSet<T>(NativeSliceReadOnly<T> arr, NativeHashSet<T> set)
+            where T : unmanaged, IEquatable<T>
+        {
+            for (int i = 0; i < arr.Length; i++)
+                set.Add(arr[i]);
+        }
         public static void CopyToList<T>(NativeList<T> list, NativeHashSet<T> set)
             where T : unmanaged, IEquatable<T>
         {

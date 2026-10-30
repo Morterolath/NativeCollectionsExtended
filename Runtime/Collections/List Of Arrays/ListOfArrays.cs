@@ -38,11 +38,17 @@ namespace NativeCollectionsExtended
             {
                 set
                 {
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+                    SafetyCheckHelper.CheckElementIndex(in this, arrayIndex, elementIndex);
+#endif
                     ArrayPointer ap = _arrayPointers[arrayIndex];
                     _arrayData[ap.Start + elementIndex] = value;
                 }
                 get
                 {
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+                    SafetyCheckHelper.CheckElementIndex(in this, arrayIndex, elementIndex);
+#endif
                     ArrayPointer ap = _arrayPointers[arrayIndex];
                     return _arrayData[ap.Start + elementIndex];
                 }
@@ -86,6 +92,9 @@ namespace NativeCollectionsExtended
             {
                 get
                 {
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+                    SafetyCheckHelper.CheckElementIndex(in this, arrayIndex, elementIndex);
+#endif
                     return _arrayData[_arrayPointers[arrayIndex].Start + elementIndex];
                 }
             }
@@ -158,11 +167,17 @@ namespace NativeCollectionsExtended
         {
             set
             {
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+                SafetyCheckHelper.CheckElementIndex(in this, arrayIndex, elementIndex);
+#endif
                 ArrayPointer ap = _arrayPointers[arrayIndex];
                 _arrayData[ap.Start + elementIndex] = value;
             }
             get
             {
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+                SafetyCheckHelper.CheckElementIndex(in this, arrayIndex, elementIndex);
+#endif
                 ArrayPointer ap = _arrayPointers[arrayIndex];
                 return _arrayData[ap.Start + elementIndex];
             }
@@ -261,10 +276,6 @@ namespace NativeCollectionsExtended
 
             _arrayPointers.Add(new ArrayPointer { Start = oldDataLength, Length = length });
         }
-        public NativeList<ArrayPointer> GetInternalListForDeferredJob()
-        {
-            return _arrayPointers;
-        }
         public Array AsArray()
         {
             return new Array(_arrayPointers.AsArray(), _arrayData.AsArray());
@@ -304,9 +315,48 @@ namespace NativeCollectionsExtended
             ArrayPointer ptr = _arrayPointers[arrayIndex];
             for (int i = ptr.Start; i < ptr.Start + ptr.Length; i++) _arrayData[i] = defaultValue;
         }
+
+#if NATIVE_COLLECTIONS_EXTENDED_DEBUG
+        struct SafetyCheckHelper
+        {
+            internal static void CheckElementIndex(in ListOfArrays<T> listOfArrays, int arrayIndex, int elementIndex)
+            {
+                if (listOfArrays._arrayPointers[arrayIndex].Length <= elementIndex)
+                    throw new System.Exception("Element index out of bounds");
+            }
+            internal static void CheckElementIndex(in ListOfArrays<T>.ReadOnly listOfArrays, int arrayIndex, int elementIndex)
+            {
+                if (listOfArrays._arrayPointers[arrayIndex].Length <= elementIndex)
+                    throw new System.Exception("Element index out of bounds");
+            }
+            internal static void CheckElementIndex(in ListOfArrays<T>.Array listOfArrays, int arrayIndex, int elementIndex)
+            {
+                if (listOfArrays._arrayPointers[arrayIndex].Length <= elementIndex)
+                    throw new System.Exception("Element index out of bounds");
+            }
+        }
+#endif
     }
     public static class ListOfArraysLowLevelHelper
     {
+        public static int2 GetArrayStartLength<T>(ListOfArrays<T> listOfArrays, int arrayIndex)
+            where T : unmanaged
+        {
+            ListOfArrays<T>.ArrayPointer ptr = listOfArrays._arrayPointers[arrayIndex];
+            return new int2(ptr.Start, ptr.Length);
+        }
+        public static int2 GetArrayStartLength<T>(ListOfArrays<T>.ReadOnly listOfArrays, int arrayIndex)
+            where T : unmanaged
+        {
+            ListOfArrays<T>.ArrayPointer ptr = listOfArrays._arrayPointers[arrayIndex];
+            return new int2(ptr.Start, ptr.Length);
+        }
+        public static int2 GetArrayStartLength<T>(ListOfArrays<T>.Array listOfArrays, int arrayIndex)
+            where T : unmanaged
+        {
+            ListOfArrays<T>.ArrayPointer ptr = listOfArrays._arrayPointers[arrayIndex];
+            return new int2(ptr.Start, ptr.Length);
+        }
         public static void GetArrayRaw<T>(ListOfArrays<T> listOfArrays, int arrayIndex, out NativeArray<T> dataBuffer, out int arrayStart, out int arrayLength)
             where T : unmanaged
         {
@@ -410,6 +460,11 @@ namespace NativeCollectionsExtended
             {
                 slicePtrs = new NativeArrayReadOnly<SlicePtr>(listOfArrays._arrayPointers.Reinterpret<SlicePtr>());
                 dataBuffer = listOfArrays._arrayData;
+            }
+            public static NativeList<ListOfArrays<T>.ArrayPointer> GetInternalArrayPointers<T>(ListOfArrays<T> listOfArrays)
+                where T : unmanaged
+            {
+                return listOfArrays._arrayPointers;
             }
         }
     }
